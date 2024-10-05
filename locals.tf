@@ -4,4 +4,5 @@ locals {
     Project     = "ASN-EX-1"
     Environment = "Prod"
   }
+  region = "ca-central-1"
 }
