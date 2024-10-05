@@ -8,9 +8,9 @@ variable "subnet_name" {
   description = "Name for subnet_name"
 }
 
-variable "vpc_cidr_block" {
+variable "vpc_id" {
   type        = string
-  description = "CIDR Block for VPC"
+  description = "ID of the VPC"
 }
 
 variable "subnet_cidr_block" {

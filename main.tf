@@ -7,7 +7,7 @@ module "vpc_main" {
 
 module "subnet_private_1a" {
   source                   = "./modules/connectivity/subnet"
-  vpc_cidr_block           = module.vpc_main.vpc_cidr_block
+  vpc_id                   = module.vpc_main.vpc_id
   subnet_cidr_block        = cidrsubnet(module.vpc_main.vpc_cidr_block, 8, 1)
   subnet_availability_zone = "${local.region}a"
   is_public                = false
@@ -18,7 +18,7 @@ module "subnet_private_1a" {
 
 module "subnet_private_1b" {
   source                   = "./modules/connectivity/subnet"
-  vpc_cidr_block           = module.vpc_main.vpc_cidr_block
+  vpc_id                   = module.vpc_main.vpc_id
   subnet_cidr_block        = cidrsubnet(module.vpc_main.vpc_cidr_block, 8, 2)
   subnet_availability_zone = "${local.region}b"
   is_public                = false
@@ -29,7 +29,7 @@ module "subnet_private_1b" {
 
 module "subnet_public_1d" {
   source                   = "./modules/connectivity/subnet"
-  vpc_cidr_block           = module.vpc_main.vpc_cidr_block
+  vpc_id                   = module.vpc_main.vpc_id
   subnet_cidr_block        = cidrsubnet(module.vpc_main.vpc_cidr_block, 8, 3)
   subnet_availability_zone = "${local.region}d"
   is_public                = true
