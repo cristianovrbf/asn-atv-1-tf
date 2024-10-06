@@ -133,3 +133,10 @@ module "alb_security_group" {
   ]
   general_tags = local.common_tags
 }
+
+module "igw" {
+  source       = "./modules/connectivity/internet-gateway"
+  igw_name     = "${local.common_tags.Project}-${local.common_tags.Pair}-igw"
+  vpc_id       = module.vpc_main.vpc_id
+  general_tags = local.common_tags
+}
