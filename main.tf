@@ -140,3 +140,30 @@ module "igw" {
   vpc_id       = module.vpc_main.vpc_id
   general_tags = local.common_tags
 }
+
+module "vpc_route_tables" {
+  source                   = "./modules/connectivity/route-table"
+  public_route_table_name  = "${local.common_tags.Project}-${local.common_tags.Pair}-public-route-table"
+  private_route_table_name = "${local.common_tags.Project}-${local.common_tags.Pair}-private-route-table"
+  vpc_id                   = module.vpc_main.vpc_id
+  igw_id                   = module.igw.igw_id
+  general_tags             = local.common_tags
+}
+
+module "subnet_private_1a_route_table_association" {
+  source         = "./modules/connectivity/route-table-association"
+  subnet_id      = module.subnet_private_1a.subnet_main_id
+  route_table_id = module.vpc_route_tables.private_route_table_id
+}
+
+module "subnet_private_1b_route_table_association" {
+  source         = "./modules/connectivity/route-table-association"
+  subnet_id      = module.subnet_private_1b.subnet_main_id
+  route_table_id = module.vpc_route_tables.private_route_table_id
+}
+
+module "subnet_public_1d_route_table_association" {
+  source         = "./modules/connectivity/route-table-association"
+  subnet_id      = module.subnet_public_1d.subnet_main_id
+  route_table_id = module.vpc_route_tables.public_route_table_id
+}
