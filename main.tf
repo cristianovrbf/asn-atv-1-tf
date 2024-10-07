@@ -179,3 +179,15 @@ module "instance_ami" {
   subnet_id         = module.subnet_private_1b.subnet_main_id
   security_ids      = [module.private_instance_security_group.security_group_id]
 }
+
+module "launch_template" {
+  source                        = "./modules/backend/launch-template"
+  launch_template_name          = "${local.common_tags.Project}-${local.common_tags.Pair}-apache-launch-template"
+  ami_id                        = module.instance_ami.ami_id
+  instance_type                 = "t2.micro"
+  availability_zone             = "${local.region}b"
+  vpc_security_group_ids        = [module.private_instance_security_group.security_group_id]
+  subnet_id                     = module.subnet_private_1b.subnet_main_id
+  general_tags                  = local.common_tags
+  launch_template_instance_name = "${local.common_tags.Project}-${local.common_tags.Pair}-apache-launch-template-instance"
+}
