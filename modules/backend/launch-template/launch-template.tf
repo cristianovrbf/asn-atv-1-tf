@@ -9,10 +9,6 @@ resource "aws_launch_template" "template" {
 
   vpc_security_group_ids = var.vpc_security_group_ids
 
-  network_interfaces {
-    subnet_id = var.subnet_id
-  }
-
   tag_specifications {
     resource_type = "instance"
 

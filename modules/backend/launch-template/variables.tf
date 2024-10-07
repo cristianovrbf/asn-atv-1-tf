@@ -23,11 +23,6 @@ variable "vpc_security_group_ids" {
   description = "security group ids to use on instances"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "ID of the subnet where the instance created by the launch template will be initialized"
-}
-
 variable "general_tags" {
   type        = map(string)
   description = "Tags that is general for all resources"
