@@ -216,3 +216,19 @@ module "application_load_balancer" {
   vpc_id                    = module.vpc_main.vpc_id
   autoscaling_group_name    = module.auto_scalling_group.auto_scalling_group_name
 }
+
+module "mysql_rds_instance" {
+  source                    = "./modules/backend/rds"
+  general_tags              = local.common_tags
+  subnets                   = [module.subnet_private_1a.subnet_main_id, module.subnet_private_1b.subnet_main_id]
+  rds_subnet_group_name     = lower("${local.common_tags.Project}-${local.common_tags.Pair}-rds-subnet")
+  database_name             = "cvrbfpfamfdb"
+  database_engine           = "mysql"
+  database_engine_version   = "8.0"
+  instance_class            = "db.t3.micro"
+  database_username         = "dbuser"
+  database_password         = "dbsecret1224"
+  database_backup_retention = 7
+  rds_instance_name         = "${local.common_tags.Project}-${local.common_tags.Pair}-mysql-rds-instance"
+  security_group_id         = module.rds_security_group.security_group_id
+}
