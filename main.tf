@@ -167,3 +167,15 @@ module "subnet_public_1d_route_table_association" {
   subnet_id      = module.subnet_public_1d.subnet_main_id
   route_table_id = module.vpc_route_tables.public_route_table_id
 }
+
+module "instance_ami" {
+  source            = "./modules/backend/AMI"
+  original_ami      = "ami-06c00e6a6b7028ea5"
+  ec2_instance_type = "t2.micro"
+  ec2_instance_name = "${local.common_tags.Project}-${local.common_tags.Pair}-temporary-instance-EC2"
+  general_tags      = local.common_tags
+  ami_name          = "${local.common_tags.Project}-${local.common_tags.Pair}-apache-instance-AMI"
+  ami_description   = "Apache Instance AMI"
+  subnet_id         = module.subnet_private_1b.subnet_main_id
+  security_ids      = [module.private_instance_security_group.security_group_id]
+}
