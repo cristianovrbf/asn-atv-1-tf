@@ -185,10 +185,19 @@ module "subnet_public_1b_route_table_association" {
   route_table_id = module.vpc_route_tables.public_route_table_id
 }
 
+data "aws_ami" "latest_ami" {
+  most_recent = true
+  owners      = ["amazon"]
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+  }
+}
+
 module "launch_template" {
   source                        = "./modules/backend/launch-template"
   launch_template_name          = "${local.common_tags.Project}-${local.common_tags.Pair}-apache-launch-template"
-  ami_id                        = "ami-06c00e6a6b7028ea5"
+  ami_id                        = data.aws_ami.latest_ami.id
   instance_type                 = "t2.micro"
   availability_zone             = "${local.region}b"
   vpc_security_group_ids        = [module.private_instance_security_group.security_group_id]
@@ -198,13 +207,14 @@ module "launch_template" {
 
 module "auto_scalling_group" {
   source             = "./modules/backend/auto-scalling-group"
-  subnets            = [module.subnet_public_1d.subnet_main_id]
+  subnets            = [module.subnet_public_1b.subnet_main_id]
   launch_template_id = module.launch_template.launch_template_id
   general_tags       = local.common_tags
   asg_name           = "${local.common_tags.Project}-${local.common_tags.Pair}-auto-scalling-group"
   desired_capacity   = 1
   max_size           = 2
   min_size           = 1
+  depends_on         = [module.launch_template]
 }
 
 module "application_load_balancer" {
