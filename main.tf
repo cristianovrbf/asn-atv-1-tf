@@ -73,6 +73,30 @@ module "public_instance_security_group" {
   general_tags = local.common_tags
 }
 
+module "alb_security_group" {
+  source                     = "./modules/connectivity/security-group"
+  security_group_name        = "${local.common_tags.Project}-${local.common_tags.Pair}-application-load-balancer-sg"
+  security_group_description = "Allows traffic on port 80 came from internet"
+  vpc_id                     = module.vpc_main.vpc_id
+  security_group_egress_rules = [
+    {
+      port            = 0
+      protocol        = "-1"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    }
+  ]
+  security_group_ingress_rules = [
+    {
+      port            = 80
+      protocol        = "TCP"
+      cidr_blocks     = ["0.0.0.0/0"]
+      security_groups = []
+    }
+  ]
+  general_tags = local.common_tags
+}
+
 module "private_instance_security_group" {
   source                     = "./modules/connectivity/security-group"
   security_group_name        = "${local.common_tags.Project}-${local.common_tags.Pair}-private-instance-sg"
@@ -91,7 +115,7 @@ module "private_instance_security_group" {
       port            = 80
       protocol        = "TCP"
       cidr_blocks     = []
-      security_groups = [module.public_instance_security_group.security_group_id]
+      security_groups = [module.alb_security_group.security_group_id]
     }
   ]
   general_tags = local.common_tags
@@ -116,30 +140,6 @@ module "rds_security_group" {
       protocol        = "TCP"
       cidr_blocks     = []
       security_groups = [module.private_instance_security_group.security_group_id]
-    }
-  ]
-  general_tags = local.common_tags
-}
-
-module "alb_security_group" {
-  source                     = "./modules/connectivity/security-group"
-  security_group_name        = "${local.common_tags.Project}-${local.common_tags.Pair}-application-load-balancer-sg"
-  security_group_description = "Allows traffic on port 80 came from internet"
-  vpc_id                     = module.vpc_main.vpc_id
-  security_group_egress_rules = [
-    {
-      port            = 0
-      protocol        = "-1"
-      cidr_blocks     = ["0.0.0.0/0"]
-      security_groups = []
-    }
-  ]
-  security_group_ingress_rules = [
-    {
-      port            = 80
-      protocol        = "TCP"
-      cidr_blocks     = ["0.0.0.0/0"]
-      security_groups = []
     }
   ]
   general_tags = local.common_tags
@@ -210,7 +210,7 @@ module "auto_scalling_group" {
 module "application_load_balancer" {
   source                    = "./modules/backend/application-load-balancer"
   alb_name                  = "${local.common_tags.Project}-${local.common_tags.Pair}-alb"
-  alb_sg_id                 = module.public_instance_security_group.security_group_id
+  alb_sg_id                 = module.alb_security_group.security_group_id
   subnets                   = [module.subnet_public_1d.subnet_main_id, module.subnet_public_1b.subnet_main_id]
   alb_main_targe_group_name = "${local.common_tags.Project}-${local.common_tags.Pair}-tg"
   vpc_id                    = module.vpc_main.vpc_id
