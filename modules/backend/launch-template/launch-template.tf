@@ -20,5 +20,5 @@ resource "aws_launch_template" "template" {
     )
   }
 
-  user_data = filebase64("${path.module}/init-script.sh")
+  user_data = filebase64("${path.module}/init-docker.sh")
 }
